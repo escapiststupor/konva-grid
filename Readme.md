@@ -6,10 +6,20 @@ Canvas grid to render large set of tabular data. Uses virtualization similar to 
 2. Supports scrolling
 3. Highly customizable using [react-konva](https://github.com/konvajs/react-konva/)
 
+## Installation
+
+````
+yarn add react-konva-grid
+
+OR
+
+npm install react-konva-grid
+````
+
 ## Usage
 
 ````js
-import { Grid } from './'
+import { Grid } from 'react-konva-grid'
 import { Group, Text, Rect } from 'react-konva'
 
 const App = () => {
