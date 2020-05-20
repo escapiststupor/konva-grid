@@ -1,0 +1,18 @@
+{
+  "include": ["src/*"],
+  "exclude": ["node_modules", "**/*.stories.tsx"],
+  "compilerOptions": {
+    "declaration": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "outDir": "dist"
+  }
+}

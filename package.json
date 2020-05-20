@@ -1,13 +1,17 @@
 {
-  "name": "react-konva",
+  "name": "react-konva-grid",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "tsc -b",
+    "check:types": "tsc --noEmit",
+    "storybook": "start-storybook -p 9002",
+    "prettier": "prettier src/**/*.tsx --write"
   },
   "dependencies": {
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "konva": "^6.0.0",
     "normalize.css": "^8.0.1",
     "parcel": "^1.12.4",
@@ -16,5 +20,22 @@
     "react-konva": "^16.13.0-3",
     "react-virtual": "^2.2.0",
     "scroller": "^0.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run check:types && npm run prettier"
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "@babel/preset-typescript": "^7.9.0",
+    "@storybook/addon-info": "^5.3.18",
+    "@storybook/react": "^5.3.18",
+    "babel-loader": "^8.1.0",
+    "react-docgen-typescript-loader": "^3.7.2",
+    "ts-loader": "^7.0.4",
+    "typescript": "^3.9.3"
   }
 }
