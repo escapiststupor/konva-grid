@@ -10,16 +10,10 @@
     "prettier": "prettier src/**/*.tsx --write"
   },
   "dependencies": {
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
     "konva": "^6.0.0",
-    "normalize.css": "^8.0.1",
-    "parcel": "^1.12.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-konva": "^16.13.0-3",
-    "react-virtual": "^2.2.0",
-    "scroller": "^0.0.3"
+    "react-konva": "^16.13.0-3"
   },
   "husky": {
     "hooks": {
@@ -33,9 +27,12 @@
     "@babel/preset-typescript": "^7.9.0",
     "@storybook/addon-info": "^5.3.18",
     "@storybook/react": "^5.3.18",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "babel-loader": "^8.1.0",
+    "husky": "^4.2.5",
+    "prettier": "^2.0.5",
     "react-docgen-typescript-loader": "^3.7.2",
-    "ts-loader": "^7.0.4",
     "typescript": "^3.9.3"
   }
 }
