@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { Stage, Layer, Group } from "react-konva";
 
-interface IProps{
+interface IProps {
   width: number;
   height: number;
   columnCount: number;
@@ -26,7 +26,7 @@ const defaultProps = {
   rowHeight: () => 20,
   columnWidth: () => 100,
   scrollbarSize: 20,
-}
+};
 
 type RenderComponent = React.FC<IChildrenProps>;
 

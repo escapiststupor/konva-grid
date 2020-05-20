@@ -4,11 +4,18 @@ import { Layer, Rect, Text, Group } from "react-konva";
 
 export default {
   title: "Grid",
-  component: Grid
+  component: Grid,
 };
 
 export const BaseGrid: React.FC = () => {
-  const Cell = ({ rowIndex, columnIndex, x, y, width, height }: IChildrenProps) => {
+  const Cell = ({
+    rowIndex,
+    columnIndex,
+    x,
+    y,
+    width,
+    height,
+  }: IChildrenProps) => {
     const text = `${rowIndex}x${columnIndex}`;
     return (
       <Group>
@@ -31,10 +38,6 @@ export const BaseGrid: React.FC = () => {
         />
       </Group>
     );
-  }
-  return (
-    <Grid>
-      {Cell}
-    </Grid>
-  );
+  };
+  return <Grid>{Cell}</Grid>;
 };
