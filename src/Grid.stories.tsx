@@ -41,7 +41,7 @@ export const BaseGrid: React.FC = () => {
   };
   return (
     <Grid
-      columnWidth={(index) => {;
+      columnWidth={(index) => {
         return 100;
       }}
       rowHeight={(index) => {
@@ -52,7 +52,6 @@ export const BaseGrid: React.FC = () => {
     </Grid>
   );
 };
-
 
 export const VariableSizeGrid: React.FC = () => {
   const Cell = ({

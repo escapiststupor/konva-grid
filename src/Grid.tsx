@@ -16,7 +16,7 @@ import {
   getRowOffset,
   getColumnOffset,
   getColumnWidth,
-  getRowHeight
+  getRowHeight,
 } from "./helpers";
 
 export interface IProps {
@@ -184,10 +184,20 @@ const Grid: React.FC<IProps> = (props) => {
         columnIndex <= columnStopIndex;
         columnIndex++
       ) {
-        const width = getColumnWidth(columnIndex, instanceProps.current)
-        const x = getColumnOffset({ index: columnIndex, rowHeight, columnWidth, instanceProps: instanceProps.current });
+        const width = getColumnWidth(columnIndex, instanceProps.current);
+        const x = getColumnOffset({
+          index: columnIndex,
+          rowHeight,
+          columnWidth,
+          instanceProps: instanceProps.current,
+        });
         const height = getRowHeight(rowIndex, instanceProps.current);
-        const y = getRowOffset({ index: rowIndex, rowHeight, columnWidth, instanceProps: instanceProps.current });
+        const y = getRowOffset({
+          index: rowIndex,
+          rowHeight,
+          columnWidth,
+          instanceProps: instanceProps.current,
+        });
         items.push(
           createElement(children, {
             x,
