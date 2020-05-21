@@ -6,8 +6,20 @@ import React, {
   createElement,
 } from "react";
 import { Stage, Layer, Group } from "react-konva";
+import {
+  getBoundedCells,
+  getRowStartIndexForOffset,
+  getRowStopIndexForStartIndex,
+  getColumnStartIndexForOffset,
+  getColumnStopIndexForStartIndex,
+  itemKey,
+  getRowOffset,
+  getColumnOffset,
+  getColumnWidth,
+  getRowHeight
+} from "./helpers";
 
-interface IProps {
+export interface IProps {
   width: number;
   height: number;
   columnCount: number;
@@ -37,110 +49,32 @@ export interface IChildrenProps extends ICell {
   height: number;
 }
 
-type TItemSize = (index?: number) => number;
+export type TItemSize = (index?: number) => number;
 
-interface IArea {
+export interface IArea {
   top: number;
   bottom: number;
   left: number;
   right: number;
 }
 
-interface ICell {
+export interface ICell {
   rowIndex: number;
   columnIndex: number;
 }
 
-const getRowStartIndex = (
-  rowCount: number,
-  rowHeight: TItemSize,
-  scrollTop: number
-) => {
-  let i = 0;
-  let startIndex = 0;
-  while (i < rowCount) {
-    const itemHeight = rowHeight(i);
-    if (i * itemHeight + itemHeight >= scrollTop) {
-      startIndex = i;
-      break;
-    }
-    i++;
-  }
-  return startIndex;
-};
+export interface IInstanceProps {
+  columnMetadataMap: TCellMetaDataMap;
+  rowMetadataMap: TCellMetaDataMap;
+  lastMeasuredColumnIndex: number;
+  lastMeasuredRowIndex: number;
+}
 
-const getRowStopIndex = (
-  startIndex: number,
-  rowCount: number,
-  rowHeight: TItemSize,
-  scrollTop: number,
-  containerHeight: number
-) => {
-  let i = startIndex;
-  let stopIndex = rowCount;
-  while (i < rowCount) {
-    const itemHeight = rowHeight(i);
-    const itemScrollTop = i * itemHeight - scrollTop;
-    if (itemScrollTop > containerHeight) {
-      stopIndex = i;
-      break;
-    }
-    i++;
-  }
-  return stopIndex;
+export type TCellMetaDataMap = Record<number, TCellMetaData>;
+export type TCellMetaData = {
+  offset: number;
+  size: number;
 };
-
-const getColumnStartIndex = (
-  columnCount: number,
-  columnWidth: TItemSize,
-  scrollLeft: number
-) => {
-  let i = 0;
-  let startIndex = 0;
-  while (i < columnCount) {
-    const itemWidth = columnWidth(i);
-    if (i * itemWidth + itemWidth >= scrollLeft) {
-      startIndex = i;
-      break;
-    }
-    i++;
-  }
-  return startIndex;
-};
-
-const getColumnStopIndex = (
-  startIndex: number,
-  columnCount: number,
-  columnWidth: TItemSize,
-  scrollLeft: number,
-  containerWidth: number
-) => {
-  let i = startIndex;
-  let stopIndex = columnCount;
-  while (i < columnCount) {
-    const itemWidth = columnWidth(i);
-    const itemScrollLeft = i * itemWidth - scrollLeft;
-    if (itemScrollLeft > containerWidth) {
-      stopIndex = i;
-      break;
-    }
-    i++;
-  }
-  return stopIndex;
-};
-const getBoundedCells = (area: IArea) => {
-  const { top, bottom, left, right } = area;
-  const cells = new Set();
-  for (let i = top; i <= bottom; i++) {
-    for (let j = left; j <= right; j++) {
-      cells.add(JSON.stringify([i, j]));
-    }
-  }
-  return cells;
-};
-
-const itemKey = ({ rowIndex, columnIndex }: ICell) =>
-  `${rowIndex}:${columnIndex}`;
 
 /**
  * Grid component
@@ -157,6 +91,12 @@ const Grid: React.FC<IProps> = (props) => {
     scrollbarSize,
     children,
   } = props;
+  const instanceProps = useRef<IInstanceProps>({
+    columnMetadataMap: {},
+    rowMetadataMap: {},
+    lastMeasuredColumnIndex: -1,
+    lastMeasuredRowIndex: -1,
+  });
   const verticalScrollRef = useRef<HTMLDivElement>(null);
   const wheelingRef = useRef<number | null>(null);
   const horizontalScrollRef = useRef<HTMLDivElement>(null);
@@ -200,26 +140,42 @@ const Grid: React.FC<IProps> = (props) => {
     });
   }, []);
 
-  const rowStartIndex = getRowStartIndex(rowCount, rowHeight, scrollTop);
-  const rowStopIndex = getRowStopIndex(
-    rowStartIndex,
+  const rowStartIndex = getRowStartIndexForOffset({
+    itemType: "row",
+    rowHeight,
+    columnWidth,
+    rowCount,
+    columnCount,
+    instanceProps: instanceProps.current,
+    offset: scrollTop,
+  });
+  const rowStopIndex = getRowStopIndexForStartIndex({
+    startIndex: rowStartIndex,
     rowCount,
     rowHeight,
-    scrollTop,
-    containerHeight
-  );
-  const columnStartIndex = getColumnStartIndex(
-    columnCount,
     columnWidth,
-    scrollLeft
-  );
-  const columnStopIndex = getColumnStopIndex(
-    columnStartIndex,
+    scrollTop,
+    containerHeight,
+    instanceProps: instanceProps.current,
+  });
+  const columnStartIndex = getColumnStartIndexForOffset({
+    itemType: "column",
+    rowHeight,
+    columnWidth,
+    rowCount,
     columnCount,
+    instanceProps: instanceProps.current,
+    offset: scrollLeft,
+  });
+  const columnStopIndex = getColumnStopIndexForStartIndex({
+    startIndex: columnStartIndex,
+    columnCount,
+    rowHeight,
     columnWidth,
     scrollLeft,
-    containerWidth
-  );
+    containerWidth,
+    instanceProps: instanceProps.current,
+  });
   const items = [];
   if (columnCount > 0 && rowCount) {
     for (let rowIndex = rowStartIndex; rowIndex <= rowStopIndex; rowIndex++) {
@@ -228,10 +184,10 @@ const Grid: React.FC<IProps> = (props) => {
         columnIndex <= columnStopIndex;
         columnIndex++
       ) {
-        const width = columnWidth(columnIndex);
-        const x = columnIndex * width;
-        const height = rowHeight(rowIndex);
-        const y = rowIndex * height;
+        const width = getColumnWidth(columnIndex, instanceProps.current)
+        const x = getColumnOffset({ index: columnIndex, rowHeight, columnWidth, instanceProps: instanceProps.current });
+        const height = getRowHeight(rowIndex, instanceProps.current);
+        const y = getRowOffset({ index: rowIndex, rowHeight, columnWidth, instanceProps: instanceProps.current });
         items.push(
           createElement(children, {
             x,

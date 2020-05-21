@@ -3,8 +3,9 @@
 Canvas grid to render large set of tabular data. Uses virtualization similar to `react-window`
 
 1. Supports virtualization - Only visible cells are rendered
-2. Supports scrolling
-3. Highly customizable using [react-konva](https://github.com/konvajs/react-konva/)
+1. Supports scrolling using native scrollbars
+1. Supports both Fixed and Variable sized grids
+1. Highly customizable using [react-konva](https://github.com/konvajs/react-konva/)
 
 ## Installation
 
@@ -66,6 +67,14 @@ const App = () => {
 ![](screenshot.png)
 
 
-### Todo
-1. Variable sized grid
+### Contributing
 
+Feel free to fork and submit pull requests
+
+````
+git clone https://github.com/rmdort/konva-grid.git
+cd konva-grid
+yarn
+// Run storybook
+yarn storybook 
+````
