@@ -17,6 +17,8 @@ import {
   getColumnOffset,
   getColumnWidth,
   getRowHeight,
+  getEstimatedTotalHeight,
+  getEstimatedTotalWidth,
 } from "./helpers";
 
 export interface IProps {
@@ -28,6 +30,8 @@ export interface IProps {
   columnWidth: TItemSize;
   children: RenderComponent;
   scrollbarSize: number;
+  estimatedColumnWidth?: number;
+  estimatedRowHeight?: number;
 }
 
 const defaultProps = {
@@ -68,6 +72,8 @@ export interface IInstanceProps {
   rowMetadataMap: TCellMetaDataMap;
   lastMeasuredColumnIndex: number;
   lastMeasuredRowIndex: number;
+  estimatedRowHeight: number;
+  estimatedColumnWidth: number;
 }
 
 export type TCellMetaDataMap = Record<number, TCellMetaData>;
@@ -75,6 +81,8 @@ export type TCellMetaData = {
   offset: number;
   size: number;
 };
+
+const DEFAULT_ESTIMATED_ITEM_SIZE = 50;
 
 /**
  * Grid component
@@ -84,6 +92,8 @@ const Grid: React.FC<IProps> = (props) => {
   const {
     width: containerWidth,
     height: containerHeight,
+    estimatedColumnWidth,
+    estimatedRowHeight,
     rowHeight,
     columnWidth,
     rowCount,
@@ -96,6 +106,8 @@ const Grid: React.FC<IProps> = (props) => {
     rowMetadataMap: {},
     lastMeasuredColumnIndex: -1,
     lastMeasuredRowIndex: -1,
+    estimatedColumnWidth: estimatedColumnWidth || DEFAULT_ESTIMATED_ITEM_SIZE,
+    estimatedRowHeight: estimatedRowHeight || DEFAULT_ESTIMATED_ITEM_SIZE,
   });
   const verticalScrollRef = useRef<HTMLDivElement>(null);
   const wheelingRef = useRef<number | null>(null);
@@ -213,6 +225,17 @@ const Grid: React.FC<IProps> = (props) => {
     }
   }
 
+  const estimatedTotalHeight = getEstimatedTotalHeight(
+    rowCount,
+    instanceProps.current.estimatedRowHeight,
+    instanceProps.current
+  );
+  const estimatedTotalWidth = getEstimatedTotalWidth(
+    columnCount,
+    instanceProps.current.estimatedColumnWidth,
+    instanceProps.current
+  );
+
   return (
     <div style={{ position: "relative", width: containerWidth + 20 }}>
       <div
@@ -231,7 +254,7 @@ const Grid: React.FC<IProps> = (props) => {
         <div
           style={{
             position: "absolute",
-            height: scrollHeight,
+            height: estimatedTotalHeight,
             width: 1,
           }}
         />
@@ -252,7 +275,7 @@ const Grid: React.FC<IProps> = (props) => {
         <div
           style={{
             position: "absolute",
-            width: scrollWidth,
+            width: estimatedTotalWidth,
             height: 1,
           }}
         />
